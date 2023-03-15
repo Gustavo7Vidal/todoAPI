@@ -20,6 +20,10 @@ function checkExistsUserAccount(req, res, next) {
     return next()
 }
 
+app.get('/users', (req, res) => {
+    return res.status(200).json(users);
+})
+
 app.post('/users', (req, res) => {
     const { name, username } = req.body;
 
@@ -44,13 +48,6 @@ app.get('/todos', checkExistsUserAccount, (req, res) => {
 
 });
 
-/* 
-    id: uuid
-    title: string
-    done: false
-    deadline: date
-    created_at: date
-*/
 app.post('/todos', checkExistsUserAccount, (req, res) => {
     const { user } = req;
     const { title, deadline } = req.body;
@@ -112,7 +109,18 @@ app.patch('/todos/:id/done', checkExistsUserAccount, (req, res) => {
 });
 
 app.delete('/todos/:id', checkExistsUserAccount, (req, res) => {
+    const { user } = req;
+    const { id } = req.params;
 
+    const checkTask = users.find((element) => element.id === id);
+
+    if(!checkTask){
+        return res.status(404).json({ error : "Task not found"});
+    }
+
+    users.splice(checkTask,1);
+
+    return res.status(200).send();
 });
 
 app.listen(3333);
