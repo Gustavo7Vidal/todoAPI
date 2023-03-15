@@ -70,12 +70,45 @@ app.post('/todos', checkExistsUserAccount, (req, res) => {
     return res.status(201).json(todoUserAdd);
 });
 // Continuar daqui ----------------- // ----------------
-app.put('/todos', checkExistsUserAccount, (req, res) => {
+app.put('/todos/:id', checkExistsUserAccount, (req, res) => {
+    const { title, deadline} = req.body;
+    const { id } = req.params;
+    const { user } = req;
+
+    const checkTask = user.todos.find((element) => element.id === id);
+
+    if(!checkTask){
+        return res.status(404).json({ error : "Task not found!"});
+    }
+
+    user.todos.find((element)=> {
+        if(element.id === id){
+            element.title = title;
+            element.deadline = deadline;
+        }
+    });
+
+    return res.status(200).send();
 
 });
 
 app.patch('/todos/:id/done', checkExistsUserAccount, (req, res) => {
+    const { user } = req;
+    const { id } = req.params;
 
+    const checkTask = user.todos.find((element) => element.id === id);
+
+    if(!checkTask){
+        return res.status(404).json({ error : "Task not found"});
+    }
+
+    user.todos.find((element) => {
+        if(element.id === id){
+            element.done = true;
+        }
+    })
+
+    return res.status(200).send();
 });
 
 app.delete('/todos/:id', checkExistsUserAccount, (req, res) => {
