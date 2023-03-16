@@ -7,6 +7,8 @@ app.use(express.json());
 
 const users = [];
 
+//MiddleWares
+
 function checkExistsUserAccount(req, res, next) {
     //
     const { username } = req.headers;
@@ -26,6 +28,7 @@ function checkTask(user, id){
     return check;
 }
 
+//Routes
 app.get('/users', (req, res) => {
     return res.status(200).json(users);
 })
